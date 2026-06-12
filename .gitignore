@@ -3,13 +3,15 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-db.sqlite3
+
+# Virtual Environments
 myenv/
 env/
 venv/
 
 # Django
-/staticfiles/
+GladProj/staticfiles/
+GladProj/db.sqlite3
 media/
 
 # Node / React
