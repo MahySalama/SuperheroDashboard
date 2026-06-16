@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'tropics-outboard-cheddar.ngrok-free.dev',
-    'superhero-dashboard-hmdbdherc5hpa2dj.canadaeast-01.azurewebsites.net/',
+    'superhero-dashboard-hmdbdherc5hpa2dj.canadaeast-01.azurewebsites.net',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
