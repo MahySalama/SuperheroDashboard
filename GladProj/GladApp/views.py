@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
 
 from .models import TeamDC, TeamMarvel
 from .serializers import TeamDCSerializer, TeamMarvelSerializer
@@ -26,7 +25,7 @@ class DCViewSet(viewsets.ModelViewSet):
 
 
 # -----------------------------
-# DATA GENERATION THREAD
+# DATA GENERATION THREAD STATE
 # -----------------------------
 
 running = False
@@ -74,8 +73,11 @@ def start_data_generation(request):
 
 @api_view(['GET'])
 def stop_data_generation(request):
-    global running
+    global running, start_time
+
     running = False
+    start_time = None
+
     return Response({"status": "Stopped data generation"})
 
 
@@ -83,13 +85,17 @@ def stop_data_generation(request):
 def stats(request):
     global start_time
 
-    if start_time is None:
-        start_time = time.time()
-
     marvel_count = TeamMarvel.objects.count()
     dc_count = TeamDC.objects.count()
     total_rows = marvel_count + dc_count
-    elapsed = int(time.time() - start_time)
+
+    if total_rows == 0:
+        elapsed = 0
+    elif running and start_time is not None:
+        elapsed = int(time.time() - start_time)
+    else:
+        elapsed = 0
+
     size_mb = round((total_rows * 200) / (1024 * 1024), 2)
 
     return Response({
