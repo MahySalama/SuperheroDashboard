@@ -111,20 +111,43 @@ function App() {
   // -------------------------------------------------------------------------
 
   useEffect(() => {
-    refreshLiveStats(); // Run once immediately when the app loads
-    
+    // When the page first loads, immediately fetch the small stat boxes
+    // Example: Marvel count, DC count, total rows, elapsed time, database size
+    refreshLiveStats();
+
+    // Also fetch the table data immediately when the page loads
+    // This fills the Marvel and DC tables with the first page of players
+    fetchTableData();
+
+    // interval will store the timer ID created by setInterval()
+    // We start with null because the timer should only exist when generation is running
     let interval = null;
-    // If the 'Start' button was clicked, start a timer that runs every 2 seconds
+
+    // If the user clicked "Start Generation", isRunning becomes true
+    // Then we start a timer that refreshes the dashboard every 2 seconds
     if (isRunning) {
-      interval = setInterval(refreshLiveStats, 2000);
+      interval = setInterval(() => {
+        // Refresh the colored stat boxes every 2 seconds
+        refreshLiveStats();
+
+        // Refresh the Marvel/DC tables every 2 seconds too
+        // This is important because new rows are being inserted in the backend
+        fetchTableData();
+      }, 2000);
     }
 
-    // Clean-up: If the component closes or isRunning changes, stop the timer
-    return () => { if (interval) clearInterval(interval); };
-  }, [refreshLiveStats, isRunning]);   // Re-run this logic if start/stop is toggled
-
-  // Separate effect: Update tables only when user clicks a new page number (page numbers changes)
-  useEffect(() => { fetchTableData(); }, [fetchTableData]);
+    // Cleanup function:
+    // React runs this when the component reloads, closes, or when isRunning changes.
+    // It stops the old timer so we do not create multiple timers at the same time.
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [refreshLiveStats, fetchTableData, isRunning]);
+  // Dependencies explanation:
+  // refreshLiveStats: needed because we call it inside this effect
+  // fetchTableData: needed because we call it inside this effect
+  // isRunning: when this changes, React starts or stops the timer
+  
 
   // -------------------------------------------------------------------------
   // 4. BUTTON HANDLERS (Start/Stop controls)
