@@ -3,7 +3,12 @@ import axios from "axios";
 // Base URL of my Django API
 // change if my backend runs on a different host/port
 // All my endpoints start with http://127.0.0.1:8000/api/
-const API_BASE = "http://127.0.0.1:8000/api";
+// Local frontend uses local Django.
+// Azure frontend uses Azure Django.
+const API_BASE =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://127.0.0.1:8000/api"
+    : "https://superhero-dashboard-hmdbdherc5hpa2dj.canadaeast-01.azurewebsites.net/api";
 
 // ------------------------------
 // FUNCTION: getStats
